@@ -153,9 +153,9 @@ sub readPPM
 
     # Use ImageMagick to crop, resize, save to disk, and output 8x8 avg pixel block RGB data in .ppm format
     $cmd = "convert $imgFile -resize '480x480^' -gravity Center -crop '480x480+0+0' "
-          .' \( +clone  -write '. $tilePath . $imgIDstr .'x480.jpg  +delete  \)'
-          .' \( +clone  -resize 128x128  -write '. $tilePath . $imgIDstr .'x128.jpg  +delete  \)'
-          .' \( +clone  -resize 32x32    -write '. $tilePath . $imgIDstr .'x32.png   +delete  \)'
+          .' \( +clone  -write '. $tilePath . $imgIDstr .'_lg.jpg  +delete  \)'
+          .' \( +clone  -resize 128x128  -write '. $tilePath . $imgIDstr .'_md.jpg  +delete  \)'
+          .' \( +clone  -resize 32x32    -write '. $tilePath . $imgIDstr .'_sm.jpg  +delete  \)'
           ." -scale '8x8'  -compress none  -depth 8  ppm:-";
     $ppm = `$cmd`;
     if ($? != 0) { die "ImageMagick error: $! (errcode $?)"; }

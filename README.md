@@ -85,6 +85,7 @@ echo "Creating Photomosaic"
 
 Programs 2, 3, & 4 are designed to take input and produce output to standard in/out, which means you can pipe the output of one to another.
 
+____________________________________________________________
 
 ## License
 

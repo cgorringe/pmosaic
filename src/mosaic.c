@@ -78,6 +78,12 @@ typedef struct {
 
   OR Macro version:
   #define abs(x)  (((x) >= 0) ? (x) : -(x))
+
+  // another version that avoids branching (not tested)
+  inline int abs(int n) {
+    int const mask = n >> (sizeof(int) * 8 - 1);
+    return ((n + mask) ^ mask);
+  }
 */
 
 /*-----------------------------------------------------------------------------

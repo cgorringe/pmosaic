@@ -38,7 +38,8 @@ sub usage()
 #------------------------------------------------------------------------------
 # Main Program
 {
-  my %tileSizeExt = ( 'sm' => 'x32.png', 'med' => 'x128.jpg', 'lg' => 'x480.jpg' );
+  # my %tileSizeExt = ( 'sm' => 'x32.png', 'med' => 'x128.jpg', 'lg' => 'x480.jpg' );
+  my %tileSizeExt = ( 'sm' => '_sm.jpg', 'med' => '_md.jpg', 'lg' => '_lg.jpg' );
   my ($i, $x, $y);
 
   #--- Retrieve command line ---
