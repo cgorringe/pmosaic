@@ -43,7 +43,8 @@ sub getFilenames
     my @filelist2 = sort(readdir(DH));
     closedir(DH);
     foreach my $file (@filelist2) {
-      if ($file ne '.' && $file ne '..') {
+      if (substr($file, 0, 1) ne '.') {
+        # don't include hidden dot files
         push @filelist, getFilenames($path .'/'. $file);
       }
     }
