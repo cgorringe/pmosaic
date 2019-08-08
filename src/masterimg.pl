@@ -100,8 +100,9 @@ sub usage()
   print STDERR "  output size: $outSize  (${xTiles}x${yTiles} tiles, ${blocks}x${blocks} pixels per tile)  flags:$flags\n";
 
   # Use ImageMagick to crop, resize, and output (8x)*(8y) avg pixel block RGB data in .ppm format
-  my $cmd = "convert $imgFile -scale '${outSize}^' -gravity Center -crop '${outSize}+0+0' "
-           ." -compress none  -depth 8  ppm:-";
+  # my $cmd = "convert $imgFile -scale '${outSize}^' -gravity Center -crop '${outSize}+0+0' "
+  #          ." -compress none  -depth 8  ppm:-";
+  my $cmd = "convert -auto-orient $imgFile -scale '${outSize}!'  -compress none  -depth 8  ppm:-";
   my $ppm = `$cmd`;
   if ($? != 0) { die "ImageMagick error: $! (errcode $?)"; }
 

@@ -138,8 +138,8 @@ sub readPPM
 
     # Create 8-digit img ID. (max ID is 99,999,999)
     $imgIDstr = sprintf('%08d', $imgID);
-    print "$imgIDstr $imgFile\n";  ## TEST ##
-    print LISTFILE "$imgIDstr $imgFile\n";
+    print "$imgIDstr $imgFile";  ## TEST ##
+    print LISTFILE "$imgIDstr $imgFile";
 
     # Create 2-digit subdirectories under $libPath if they do not already exist.
     # Subdir tree has 3 depth (e.g. libPath/00/00/00/00000001bg.jpg) and upto 100 images per dir.
@@ -164,15 +164,34 @@ sub readPPM
     }
 
     # Use ImageMagick to crop, resize, save to disk, and output 8x8 avg pixel block RGB data in .ppm format
-    $cmd = "convert $imgFile -resize '480x480^' -gravity Center -crop '480x480+0+0' "
+    # TODO: specify tSize on command line
+    # my $tSize = '512x512';  # default size (square)
+    # my $tSize = '316x475';  # guessing book size 0.66 (2:3 ratio)
+    my $tSize = '356x475';  # guessing book size 0.75 (3:4 ratio)
+
+    $cmd = "convert $imgFile -resize '". $tSize ."^' -gravity Center -crop '". $tSize ."+0+0' "
           .' \( +clone  -write '. $tilePath . $imgIDstr .'_lg.jpg  +delete  \)'
-          .' \( +clone  -resize 128x128  -write '. $tilePath . $imgIDstr .'_md.jpg  +delete  \)'
-          .' \( +clone  -resize 32x32    -write '. $tilePath . $imgIDstr .'_sm.jpg  +delete  \)'
-          ." -scale '8x8'  -compress none  -depth 8  ppm:-";
+          .' \( +clone  -resize 25%   -write '. $tilePath . $imgIDstr .'_md.jpg  +delete  \)'
+          .' \( +clone  -resize 6.25% -write '. $tilePath . $imgIDstr .'_sm.jpg  +delete  \)'
+          ." -identify  -scale '8x8!'  -compress none  -depth 8  ppm:-";
     $ppm = `$cmd`;
     if ($? != 0) { die "ImageMagick error: $! (errcode $?)"; }
 
     # print "$ppm \n";  ## TEST ##
+
+    # Extract first line, which is -identify output:
+    # "example.jpg JPEG 364x475=>300x475 364x475+32+0 8-bit sRGB 0.030u 0:00.029"
+    $ppm =~ s/^(.*\n)//;
+    my $identify = $1;
+    # print "identify: $identify";  ## TEST ##
+    my @idWords = split(' ', $identify);
+    my $res = $idWords[2];
+    # print "res: $res \n";  ## TEST ##
+    $res =~ m/^(\d+)x(\d+)/;
+    my ($xres, $yres) = ($1, $2);
+
+    print " \t ${xres}x${yres}\n";  ## TEST ##
+    print LISTFILE " ${xres}x${yres}\n";
 
     # Remove commented lines beginning with '#' from $ppm (fixes bug)
     $ppm =~ s/\#.*$//mg;
@@ -241,6 +260,8 @@ sub readPPM
     my @outData = ();
     push @outData, $imgID;
     push @outData, $Ydelta;
+    push @outData, $xres;
+    push @outData, $yres;
     for (my $i=0; $i < scalar(@YN); $i++) {
       push @outData, $YN[$i];
       push @outData, $U[$i];
@@ -248,11 +269,12 @@ sub readPPM
       push @outData, 0;       # temporary E value
     }
 
-    #  Output per image: (268 bytes)
+    #  Output per image: (270 bytes, was 268)
     #    'TILE'   (4-byte ASCII) [only in binary db] 'TILE' = 0x54494C45
     #    imageID  (4-byte long int)
     #    Ydelta   (2-byte signed short int)
-    #    Reserved (2-byte short int) [only in binary db]
+    #    xres     (2-byte signed short int)
+    #    yres     (2-byte signed short int)
     #    matrixD  (8*8*4 bytes) which contain average values {Y', U, V, E}
 
     # Output to database text file
@@ -261,10 +283,11 @@ sub readPPM
     print DBTXT $outLine;
 
     # Output to database binary file
-    my $binLine = pack('CCCC', ord('T'), ord('I'), ord('L'), ord('E'));
-    $binLine   .= pack('l', shift @outData);
-    $binLine   .= pack('s', shift @outData);
-    $binLine   .= pack('s', 0);
+    my $binLine = pack('CCCC', ord('T'), ord('I'), ord('L'), ord('E'));  # 'TILE'
+    $binLine   .= pack('l', shift @outData);  # imgID
+    $binLine   .= pack('s', shift @outData);  # Ydelta
+    $binLine   .= pack('s', shift @outData);  # xres
+    $binLine   .= pack('s', shift @outData);  # yres
     $binLine   .= pack('C[256]', @outData);   # 8*8*4 = 256  # TODO: Don't hardcode this?
     # tried replacing 256 with '*', but error msg!  Official docs incorrect for perl v5.10.0
     # see: http://perldoc.perl.org/functions/pack.html

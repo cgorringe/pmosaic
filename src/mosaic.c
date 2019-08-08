@@ -57,12 +57,13 @@ typedef struct {
 } TilePixel;
 
 typedef struct {
-  int32_t magic;             //     4 bytes  = 'TILE'  (defined as TILE_MAGIC)
+  int32_t magic;             //     4 bytes  'TILE'   (TILE_MAGIC)
   int32_t imageID;           //     4 bytes  int32_t
   int16_t Ydelta;            //     2 bytes  int16_t  range:[-255,+255]
-  int16_t reserved;          //     2 bytes  int16_t
+  int16_t xres;              //     2 bytes  int16_t  xres of original image (replaced)
+  int16_t yres;              //     2 bytes  int16_t  yres of original image (new)
   TilePixel pixel[BLOCKS];   // + 256 bytes
-} TileRecord;                 // = 264+4 bytes total
+} TileRecord;                // = 270 bytes total (was 268)
 
 #pragma pack(pop)   /* restore original alignment from stack */
 
