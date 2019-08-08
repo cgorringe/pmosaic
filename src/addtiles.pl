@@ -107,7 +107,18 @@ sub readPPM
   # Retrieve last imgID in db
   my $imgID = 1;
   my $dbBinSize = 0;
-  if (-e $dbBinFile) {
+  if (-e $dbTxtFile) {
+    # calculate $imgID based on last id number in db
+    # which is more accurate than based on file size
+    my $cmdtail = "tail -n1 $dbTxtFile";
+    my $tail = `$cmdtail`;
+    if ($? != 0) { die "tail command error: $! (errcode $?)"; }
+    my @tailNums = split(' ', $tail);
+    my $lastId = shift @tailNums;
+    $imgID = $lastId + 1;
+  }
+  elsif (-e $dbBinFile) {
+    # else calculate $imgID based on file size
     $dbBinSize = -s $dbBinFile;
     $imgID = int($dbBinSize / $dbBinRecSize) + 1;
   }
