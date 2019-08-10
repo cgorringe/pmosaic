@@ -131,10 +131,15 @@ sub readPPM
   open(DBBIN, '>>', $dbBinFile) or die "Error appending to binary database $dbBinFile : $!";
   binmode DBBIN;  # set file to binary mode
 
+  # Handle SIGINT (ctrl-C)
+  my $exitFlag = 0;
+  local $SIG{INT} = sub { $exitFlag = 1; };
+
   # Loop thru every file
   print "Adding ". scalar(@filelist) ." image files to tile database...\n\n";
   my ($cmd, $ppm, $temp);
   foreach my $imgFile (@filelist) {
+    last if $exitFlag == 1;
 
     # Create 8-digit img ID. (max ID is 99,999,999)
     $imgIDstr = sprintf('%08d', $imgID);
@@ -175,7 +180,8 @@ sub readPPM
           .' \( +clone  -resize 6.25% -write '. $tilePath . $imgIDstr .'_sm.jpg  +delete  \)'
           ." -identify  -scale '8x8!'  -compress none  -depth 8  ppm:-";
     $ppm = `$cmd`;
-    if ($? != 0) { die "ImageMagick error: $! (errcode $?)"; }
+    # if ($? != 0) { die "ImageMagick error: $! (errcode $?)"; }
+    if ($? != 0) { print "\nImageMagick error: $! (errcode $?)\n"; $exitFlag = 1; last; }
 
     # print "$ppm \n";  ## TEST ##
 
@@ -190,7 +196,7 @@ sub readPPM
     $res =~ m/^(\d+)x(\d+)/;
     my ($xres, $yres) = ($1, $2);
 
-    print " \t ${xres}x${yres}\n";  ## TEST ##
+    print " \t ${xres}x${yres}\n";
     print LISTFILE " ${xres}x${yres}\n";
 
     # Remove commented lines beginning with '#' from $ppm (fixes bug)
@@ -299,6 +305,10 @@ sub readPPM
   close DBBIN     or die "Can't close $dbBinFile: $!\n";
   close DBTXT     or die "Can't close $dbTxtFile: $!\n";
   close LISTFILE  or die "Can't close $dbListFile: $!\n";
+
+  if ($exitFlag == 1) {
+    print "Exited early. Next TileID: $imgID\n";
+  }
   print "\nDone!\n";  ## TEST ##
 }
 
