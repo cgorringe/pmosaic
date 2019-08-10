@@ -26,12 +26,12 @@ sub usage()
 {
   print STDERR "Creates image from mosaic program's CSV output. (v1.0) \n";
   print STDERR "(c) 2010 Carl Gorringe - carl.gorringe.org\n\n";
-  print STDERR "Usage: create.pl lib_path [png|html] [sm|med|lg] < input.csv > output \n";
+  print STDERR "Usage: create.pl lib_path [png|jpg|html] [sm|med|lg] < input.csv > output \n";
   print STDERR "       lib_path is the root library path where tile images are located.\n";
-  print STDERR "       'png' or 'html' is type of output file to create.\n";
+  print STDERR "       'png','jpg', or 'html' is type of output file to create.\n";
   print STDERR "       'sm', 'med', or 'lg' to specify tile size.\n";
   print STDERR "       input.csv is the CSV file from mosaic's output.\n";
-  print STDERR "       output is the html or png image file to create.\n\n";
+  print STDERR "       output is the html or png/jpg image file to create.\n\n";
   exit(1);
 }
 
@@ -86,7 +86,7 @@ sub usage()
       $vflipFlag = 0;
     }
 
-    # Create file path + name from imgID (e.g. "00/00/00/00000001x32.png")
+    # Create file path + name from imgID (e.g. "00/00/00/00000001_sm.jpg")
     $imgIDstr = sprintf('%08d', $imgID);
     $tileFile = substr($imgIDstr, 0, 2) .'/'. substr($imgIDstr, 2, 2) .'/'. 
                 substr($imgIDstr, 4, 2) .'/'. $imgIDstr;
@@ -99,12 +99,12 @@ sub usage()
   }
 
   #--- Output photomosaic ---
-  if ($outType eq 'png') {
+  if (($outType eq 'png') || ($outType eq 'jpg')) {
     #-- Create PNG image --
     # NOTE: How to create PNG using ImageMagick:
     #  echo "img1.png im2.png ... imgN.png" | montage @-  -mode Concatenate  -tile 20x30  png:-
 
-    my $cmd = 'montage  @-  -mode Concatenate  -tile '. ${xTiles} .'x'. ${yTiles} .'  png:-';
+    my $cmd = "montage  @-  -mode Concatenate  -tile ${xTiles}x${yTiles} ${outType}:-";
     print STDERR "Running: $cmd \n";
 
     my $timeBegin = time;
