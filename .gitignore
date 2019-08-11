@@ -6,4 +6,5 @@ scripts/
 src/mosaic.o
 src/mosaic
 !src/mosaic.c
+!src/mosaic.h
 

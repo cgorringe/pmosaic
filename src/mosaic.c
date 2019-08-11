@@ -39,38 +39,7 @@
 #include <time.h>
 
 #include <Judy.h>   // requires libjudy installed, and compile flag -lJudy
-
-// Constants
-#define BLOCKS  8*8               // number of blocks in a tile
-#define NUM_TILES  20*30          // number of tiles in master image (TEST)
-#define TILE_MAGIC  0x454C4954    // ASCII 'TILE' in reverse byte order
-
-#pragma pack(push)  /* push current alignment to stack */
-#pragma pack(1)     /* set alignment to 1 byte boundary */
-
-// Structures
-typedef struct {
-  uint8_t Y;
-  uint8_t U;
-  uint8_t V;
-  uint8_t E;
-} TilePixel;
-
-typedef struct {
-  int32_t magic;             //     4 bytes  'TILE'   (TILE_MAGIC)
-  int32_t imageID;           //     4 bytes  int32_t
-  int16_t Ydelta;            //     2 bytes  int16_t  range:[-255,+255]
-  int16_t xres;              //     2 bytes  int16_t  xres of original image (replaced)
-  int16_t yres;              //     2 bytes  int16_t  yres of original image (new)
-  TilePixel pixel[BLOCKS];   // + 256 bytes
-} TileRecord;                // = 270 bytes total (was 268)
-
-#pragma pack(pop)   /* restore original alignment from stack */
-
-typedef struct {
-  int score;
-  int32_t id;   // signed, negative value means tile flipped vertically
-} TileScore;
+#include "mosaic.h"
 
 /*
   // potentially faster absolute value?
@@ -512,9 +481,7 @@ int main(int argc, char * argv[])
   clock_t clockBegin, clockEnd;
   double clockDiff;
   FILE *DB;
-  // TileScore tileScores[NUM_TILES][NUM_TILES];
   TileScore **tileScores;
-  // TileRecord tileImg[NUM_TILES];
   TileRecord *tileImg;
   TileRecord libImg;
 

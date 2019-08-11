@@ -104,7 +104,7 @@ sub usage()
     # NOTE: How to create PNG using ImageMagick:
     #  echo "img1.png im2.png ... imgN.png" | montage @-  -mode Concatenate  -tile 20x30  png:-
 
-    my $cmd = "montage  @-  -mode Concatenate  -tile ${xTiles}x${yTiles} ${outType}:-";
+    my $cmd = 'montage  @-' . "  -mode Concatenate  -tile ${xTiles}x${yTiles} ${outType}:-";
     print STDERR "Running: $cmd \n";
 
     my $timeBegin = time;
