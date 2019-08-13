@@ -7,4 +7,7 @@ src/mosaic.o
 src/mosaic
 !src/mosaic.c
 !src/mosaic.h
+src/filterdb.o
+src/filterdb
+!src/filterdb.c
 
