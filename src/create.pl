@@ -124,16 +124,18 @@ sub usage()
   }
   elsif ($outType eq 'html') {
     #-- Create HTML file --
-    print "<html><head><title>Photomosaic</title></head><body>\n";
+    print "<html><head><title>Photomosaic</title>\n";
+    print " <style>table {border-collapse:collapse} td {padding:0}</style>\n";
+    print "</head><body>\n";
     # print "<h2>Photomosaic</h2><br/>\n";
-    print '<table border="0" cellpadding="0" cellspacing="0">'."\n";
+    print "<table>\n";
 
     $i = 0;
     for ($y=0; $y < $yTiles; $y++) {
       print " <tr>\n";
       for ($x=0; $x < $xTiles; $x++) {
         print '  <td>';
-        print '<a href="'. $imgBigFiles[$i] .'"><img src="'. $imgFiles[$i] .'" border="0"/></a>';
+        print '<a href="'. $imgBigFiles[$i] .'"><img src="'. $imgFiles[$i] .'" title="('. $x .', '. $y .') #'. $i .'"></a>';
         print "</td>\n";
         $i++;
       }
