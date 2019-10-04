@@ -86,11 +86,11 @@ CSV Input:
 
 CSV Output:
 
-  Xtiles, Ytiles, Blocks, Flags, Wy, Wc, We, dups
-  pos1, Ydelta1, imageID1
-  pos2, Ydelta2, imageID2
+  Xtiles, Ytiles, Xblocks, Yblocks, Flags, Wy, Wc, We, dups
+  pos1, Ydelta1, imageID1, altID2, altID3
+  pos2, Ydelta2, imageID2, ...
   ...
-  posN, YdeltaN, imageIDN
+  posN, YdeltaN, imageIDN, ...
 
   -----------------------------------------------------------------------------
 */
@@ -363,11 +363,11 @@ void readTilesFromCSV(FILE *in , int numTiles, int numBlocks, TileRecord *tileIm
 /*
 CSV Output:
 
-  Xtiles, Ytiles, Blocks, Flags, Wy, Wc, We, dups
-  pos1, Ydelta1, imageID1
-  pos2, Ydelta2, imageID2
+  Xtiles, Ytiles, Xblocks, Yblocks, Flags, Wy, Wc, We, dups
+  pos1, Ydelta1, imageID1, altID2, altID3
+  pos2, Ydelta2, imageID2, ...
   ...
-  posN, YdeltaN, imageIDN
+  posN, YdeltaN, imageIDN, ...
 */
 // NOTE: Where to get the Ydelta values???
 
@@ -375,6 +375,7 @@ void writeTiles( FILE *outfile, int numTiles, int dups,
                  TileScore **tileScores, TileRecord *tileImg )
 {
   int i, j, id=0, pos=0, y=0;
+  int id2=-1, id3=-1;  // alternate ids
 
   // init Judy array
   Pvoid_t idList = (Pvoid_t) NULL;  // JudyL array (Judy.h required)
@@ -388,9 +389,11 @@ void writeTiles( FILE *outfile, int numTiles, int dups,
     // output all best matching tiles, including all duplicates
     for (i=0; i < numTiles; i++) {
       id = tileScores[i][0].id;
+      id2 = (i >= 1) ? tileScores[i][1].id : -1;
+      id3 = (i >= 2) ? tileScores[i][2].id : -1;
       pos = tileImg[i].imageID;
       y = tileImg[i].Ydelta;   // TODO: change this
-      fprintf(outfile, "%d,%d,%d\n", pos, y, id);
+      fprintf(outfile, "%d,%d,%d,%d,%d\n", pos, y, id, id2, id3);
     }
   }
   else {
@@ -404,6 +407,8 @@ void writeTiles( FILE *outfile, int numTiles, int dups,
       j=0;
       while(j <= i) {
         id = tileScores[i][j].id;
+        id2 = (j + 1 <= i) ? tileScores[i][j + 1].id : -1;
+        id3 = (j + 2 <= i) ? tileScores[i][j + 2].id : -1;
         //index = (Word_t) id;
         index = (Word_t) abs(id);    // taking abs() removes vflip duplicate ** BUG! **
         // Part of FIX is to double the num of scores per tile, but still have to figure this out. (WRONG)
@@ -428,7 +433,7 @@ void writeTiles( FILE *outfile, int numTiles, int dups,
         j++;
       }
 
-      fprintf(outfile, "%d,%d,%d\n", pos, y, id);
+      fprintf(outfile, "%d,%d,%d,%d,%d\n", pos, y, id, id2, id3);
     }
 
     JLFA(value, idList);  // JudyLFreeArray()
