@@ -89,7 +89,7 @@ sub readPPM
   my $dbTxtFile = $libPath .'mosaic.txt';
   my $dbBinFile = $libPath .'mosaic.db';
   my $dbListFile = $libPath .'filelist.txt';
-  my $dbBinRecSize = 268;   # record size is 8*8*4+12 = 268 bytes
+  my $dbBinRecSize = 270;   # record size is 8*8*4+14 = 270 bytes
 
   # Retrieve file list
   print "Retrieving file list...\n";
