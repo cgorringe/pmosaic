@@ -10,4 +10,5 @@ src/mosaic
 src/filterdb.o
 src/filterdb
 !src/filterdb.c
+include.html
 
