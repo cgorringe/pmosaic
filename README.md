@@ -1,8 +1,18 @@
-## Photomosaic
+## Photomosaic Image Generator
 
 By [Carl Gorringe](http://carl.gorringe.org)
 
-This is my photomosaic image generator. I first conceived of the algorithm and wrote a program to generate photomosaics using Visual Basic in 1998. I later revisited the idea, improved the algorithm, and entirely rewrote the code as a collection of command-line programs written in Perl and C in 2010. I'm working on updating the code and releasing as open-source in 2019.
+This is my photomosaic image generator. I first conceived of the algorithm and wrote a program to generate photomosaics using Visual Basic in 1998. I later revisited the idea, improved the algorithm, and entirely rewrote the code as a collection of command-line programs written in Perl and C in 2010.
+
+If you would like to use my code for a project, please [contact me](https://carl.gorringe.org/contact)!
+
+See more photos on my [Photomosaics website](https://carl.gorringe.org/mosaics/).
+
+| Original | Mosaic | Closeup |
+| -------- | ------ | ------- |
+![](mosaics/archive1-logo.png) | ![](mosaics/archive1-mosaic.jpg) | ![](mosaics/archive1-closeup.jpg)
+![](mosaics/archive2-building.jpg) | ![](mosaics/archive2-mosaic.jpg) | ![](mosaics/archive2-closeup.jpg)
+
 
 ### Requirements
 
@@ -32,38 +42,37 @@ Then create these directories inside the root:
 
 ### Install Dependencies
 
-* Judy C library
-* ImageMagick
+* [Judy C library](http://judy.sourceforge.net) - used for efficient data structures. See [Judy array](https://en.wikipedia.org/wiki/Judy_array) for more info.
+* [ImageMagick](https://imagemagick.org/) - used for graphics processing.
 
-#### 1. Judy C library
+#### MacOS using Homebrew
 
-**Mac OS X using Homebrew:**
+The Judy library appears to have been [removed](https://github.com/Homebrew/homebrew-core/issues/1562) from Homebrew so it might not be so easy to install. Try downloading from above link and compile from source. Then install ImageMagick:
 
 ```
-brew install judy
+brew install imagemagick
 ```
 
-**Ubuntu or Debian Linux:**
+#### Ubuntu / Debian Linux
 
-May need to add the *universe* repo in order to install this. (*need to check*)
+You may need to add the *universe* repo in order to install `libjudy-dev` (*need to check*)
 
 ```
 apt-get install libjudy-dev
+apt-get install imagemagick
 ```
-
-#### 2. ImageMagick
-
-TODO
 
 
 ### How to Use
 
-**This is not complete yet.** (will finish later...)
+#### Steps:
 
 1. First run ```make``` from the src directory to compile the C source code.
 2. Run ```./addtiles.pl``` to create an image library database.
 3. Create a shell script (below), modified for your use.
 4. Run the shell script from inside the **src** directory.
+
+#### Example Shell Script:
 
 ```
 #!/bin/sh
@@ -73,7 +82,8 @@ echo "Creating Photomosaic"
 
 ```
 
-#### What Programs Do
+
+### What Programs Do
 
 1. **addtiles.pl** - Add image tiles to a mosaic library. Need to do this first before trying to generate a photomosaic. It can take a long time with a large collection, but it only has to be done once. Expect several hours or run overnight depending on size of collection.
 
