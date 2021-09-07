@@ -47,7 +47,7 @@ Then create these directories inside the root:
 
 #### MacOS using Homebrew
 
-The Judy library appears to have been [removed](https://github.com/Homebrew/homebrew-core/issues/1562) from Homebrew so it might not be so easy to install. Try downloading from above link and compile from source. Then install ImageMagick:
+The Judy library appears to have been [removed](https://github.com/Homebrew/homebrew-core/issues/1562) from Homebrew so you'll need to compile from source, which I've included in the **zips** directory or you can download it from the above link. See instructions below. Then install ImageMagick:
 
 ```
 brew install imagemagick
@@ -58,8 +58,20 @@ brew install imagemagick
 You may need to add the *universe* repo in order to install `libjudy-dev` (*need to check*)
 
 ```
-apt-get install libjudy-dev
-apt-get install imagemagick
+apt-get install libjudy-dev imagemagick
+```
+
+#### Installing Judy library from Source
+
+In case this library may be hard to find in the future, I've included it in the **zips** directory. Taking the following steps should compile and install the library. See the archive's included INSTALL and README files for details.
+
+```
+tar -xf Judy-1.0.5.tar.gz
+cd judy-1.0.5
+./configure
+make
+make check
+make install
 ```
 
 
