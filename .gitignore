@@ -11,4 +11,5 @@ src/filterdb.o
 src/filterdb
 !src/filterdb.c
 include.html
+zips/judy-1.0.5/
 

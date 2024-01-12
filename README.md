@@ -45,7 +45,7 @@ Then create these directories inside the root:
 * [Judy C library](http://judy.sourceforge.net) - used for efficient data structures. See [Judy array](https://en.wikipedia.org/wiki/Judy_array) for more info.
 * [ImageMagick](https://imagemagick.org/) - used for graphics processing.
 
-#### MacOS using Homebrew
+#### macOS using Homebrew
 
 The Judy library appears to have been [removed](https://github.com/Homebrew/homebrew-core/issues/1562) from Homebrew so you'll need to compile from source, which I've included in the **zips** directory or you can download it from the above link. See instructions below. Then install ImageMagick:
 
@@ -71,7 +71,7 @@ cd judy-1.0.5
 ./configure
 make
 make check
-make install
+sudo make install
 ```
 
 
@@ -97,7 +97,7 @@ echo "Creating Photomosaic"
 
 ### What Programs Do
 
-1. **addtiles.pl** - Add image tiles to a mosaic library. Need to do this first before trying to generate a photomosaic. It can take a long time with a large collection, but it only has to be done once. Expect several hours or run overnight depending on size of collection.
+1. **addtiles.pl** - Add image tiles to a mosaic library. Need to do this first before trying to generate a photomosaic. It can take a long time with a large collection, but it only has to be done once. Expect several hours or run overnight depending on size of collection. With modern computers, this step may complete within minutes.
 
 2. **masterimg.pl** - This extracts color data from the master image and produces a CSV text file to be used as input into the **mosaic** program. You tell this program how many tiles that you want across and down in the photomosaic, and how many duplicate tiles to allow. Takes a few seconds.
 
@@ -106,6 +106,33 @@ echo "Creating Photomosaic"
 4. **create.pl** - Takes the output from **mosaic** to generate the final photomosaic image. You can choose from 3 sizes, and either a PNG image, or an HTML table. Uses ImageMagick to generate the PNG, which is a little slow and can take up to a few minutes. The HTML generator is faster.
 
 Programs 2, 3, & 4 are designed to take input and produce output to standard in/out, which means you can pipe the output of one to another.
+
+
+### How to Create a Photomosaic from Video Stills
+
+First install the **ffmpeg** command-line tool. On macOS using Homebrew you can do this:
+
+```
+brew install ffmpeg
+```
+
+To export an image for every frame in the video, run something like this:
+
+```
+mkdir frames
+ffmpeg -i input.mp4 frames/output_%06d.jpg
+```
+
+If your video is 30 fps, then the number of output images will be 30 * length of video in seconds. If you only want to capture a single frame per second, you can do this:
+
+```
+ffmpeg -i input.mp4 -r 1 frames/output_%06d.jpg
+```
+
+Replace `-r 1` with `-r 1/2` for 2 frames per second, `-r 1/3` for 3 per second, etc.
+
+After you've got your images, run `addtiles.pl` to import them into an image library.
+
 
 ____________________________________________________________
 

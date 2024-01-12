@@ -170,11 +170,12 @@ sub readPPM
 
     # Use ImageMagick to crop, resize, save to disk, and output 8x8 avg pixel block RGB data in .ppm format
     # TODO: specify tSize on command line
-    # my ($rSize, $tSize) = ('512x512', '512x512');  # default size (square)
-    my ($rSize, $tSize) = ('316x475', '312x468');  # book, crop size 0.66 (2:3 ratio)
-    # my ($rSize, $tSize) = ('356x475', '351x468');  # book, crop size 0.75 (3:4 ratio)
+    my ($rSize, $tSize) = ('512x512', '512x512+0+0');  # default size (square)
+    # my ($rSize, $tSize) = ('316x475', '312x468+0+0');  # book, crop size 0.66 (2:3 ratio)
+    # my ($rSize, $tSize) = ('356x475', '351x468+0+0');  # book, crop size 0.75 (3:4 ratio)
+    # my ($rSize, $tSize) = ('480x360', '430x360+2+0');  # cartoon video, crop size 1.2 (6:5 ratio)
 
-    $cmd = "convert $imgFile -resize '". $rSize ."^' -gravity Center -crop '". $tSize ."+0+0' "
+    $cmd = "convert $imgFile -resize '". $rSize ."^' -gravity Center -crop '". $tSize ."' "
           .' \( +clone  -write '. $tilePath . $imgIDstr .'_lg.jpg  +delete  \)'
           .' \( +clone  -resize 25%   -write '. $tilePath . $imgIDstr .'_md.jpg  +delete  \)'
           .' \( +clone  -resize 6.25% -write '. $tilePath . $imgIDstr .'_sm.jpg  +delete  \)'
